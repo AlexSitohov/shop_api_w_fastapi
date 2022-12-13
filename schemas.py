@@ -31,16 +31,14 @@ class CustomerResponse(BaseModel):
 
 class Order(BaseModel):
     # customer_id: int
-    item_id: int
-
-    class Config:
-        orm_mode = True
+    items_id: list[int]
 
 
 class OrderResponse(BaseModel):
+    id: int
     date_time_created: datetime
     customer: CustomerResponse
-    item: Item
+    items: list[Item]
 
     class Config:
         orm_mode = True

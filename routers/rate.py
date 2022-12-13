@@ -24,4 +24,4 @@ def rate(rate_data: Rate, db: Session = Depends(get_db), current_user: Customer 
         db.add(new_rate)
         db.commit()
         db.refresh(new_rate)
-        return {'msg': 'вы оценили'}
+        return {'msg': f'вы поставили оценку {new_rate.ball}'}

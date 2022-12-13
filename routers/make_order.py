@@ -14,9 +14,13 @@ router = APIRouter(tags=['order'])
 
 @router.post('/make/order/', response_model=OrderResponse, status_code=status.HTTP_201_CREATED)
 def make_order(order: Order, db: Session = Depends(get_db), current_user: Customer = Depends(get_current_user)):
+    items = []
+    for i in order.items_id:
+        item = db.query(models.Item).filter(models.Item.id == i).first()
+        items.append(item)
     new_order = models.Order(date_time_created=datetime.now(), customer_id=current_user.dict().get('id_customer'),
-                             item_id=order.item_id)
-    payment(current_user.dict().get('id_customer'), order.item_id, db)
+                             items=items)
+    payment(current_user.dict().get('id_customer'), items, db)
     db.add(new_order)
     db.commit()
     db.refresh(new_order)

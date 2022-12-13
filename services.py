@@ -1,18 +1,15 @@
-from datetime import datetime
-
 from fastapi import APIRouter, Depends, HTTPException, status
-
 import models
-from database import get_db
-from schemas import Order, OrderResponse, Customer
 from sqlalchemy.orm import Session
 
 
-def payment(customer_id, item_id, db: Session):
-    client = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
-    dish = db.query(models.Item).filter(models.Item.id == item_id).first()
-    if client.balance - dish.price < 0:
+def payment(customer_id, items, db: Session):
+    customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
+    items_prices = [item.price for item in items]
+    result_summa = sum(items_prices)
+
+    if customer.balance - result_summa < 0:
         raise HTTPException(status_code=status.HTTP_402_PAYMENT_REQUIRED, detail='не хватает денег')
-    client.balance -= dish.price
+    customer.balance -= result_summa
     db.commit()
-    db.refresh(client)
+    db.refresh(customer)
