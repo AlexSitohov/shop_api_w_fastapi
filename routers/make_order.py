@@ -14,9 +14,14 @@ router = APIRouter(tags=['order'])
 
 @router.post('/make/order/', response_model=OrderResponse, status_code=status.HTTP_201_CREATED)
 def make_order(order: Order, db: Session = Depends(get_db), current_user: Customer = Depends(get_current_user)):
+    if not order.items_id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Вы не выбрали ни одного продукта')
     items = []
     for i in order.items_id:
         item = db.query(models.Item).filter(models.Item.id == i).first()
+        if not item:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'продукта с id {i} нет')
+
         items.append(item)
     new_order = models.Order(date_time_created=datetime.now(), customer_id=current_user.dict().get('id_customer'),
                              items=items)

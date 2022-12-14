@@ -33,6 +33,14 @@ class Order(BaseModel):
     # customer_id: int
     items_id: list[int]
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "items_id": [
+                    1, 2, 3
+                ]}
+        }
+
 
 class OrderResponse(BaseModel):
     id: int
