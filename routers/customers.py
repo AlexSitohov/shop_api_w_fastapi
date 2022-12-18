@@ -20,19 +20,19 @@ def create_customer(customer: Customer, db: Session = Depends(get_db)):
     return new_customer
 
 
-@router.get('/customers/')
+@router.get('/customers/', response_model=list[Customer])
 def get_customers(db: Session = Depends(get_db)):
     customers = db.query(models.Customer).all()
     return customers
 
 
-@router.get('/customers/{item_id}/')
+@router.get('/customers/{customer_id}/')
 def get_customer(customer_id: int, db: Session = Depends(get_db)):
     customer = db.query(models.Customer).filter(models.Customer.id == customer_id).first()
     orders = db.query(models.Order).filter(models.Order.customer_id == customer_id).all()
     if not customer:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='NOT_FOUND')
-    return customer, orders
+    return customer, {"orders": orders}
 
 
 @router.delete('/customer/{customer_id}/')

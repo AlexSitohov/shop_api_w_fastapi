@@ -1,0 +1,21 @@
+version: '1'
+
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8080
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 123
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "test"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080

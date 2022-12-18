@@ -65,7 +65,7 @@ class TokenData(BaseModel):
 
 class Rate(BaseModel):
     item_id: int
-    ball: int = Field(gt=0, lt=6)
+    bal: int = Field(gt=0, lt=6)
 
     class Config:
         orm_mode = True
